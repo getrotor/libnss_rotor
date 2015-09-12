@@ -57,11 +57,11 @@ _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
       idx += sizeof(char*);
 
       /* Third, add the address */
-      in_addr_t addr = inet_addr("1.2.3.4");
+      r_addr = buffer + idx;
       alen = 4; /* 4 for AF_INET */
-
+      in_addr_t addr = inet_addr("1.2.3.4");
       memcpy(r_addr, &addr, alen);
-        idx += ALIGN(alen);
+      idx += ALIGN(alen);
 
       /* Fourth, add address pointer array */
       r_addr_list = buffer + idx;
