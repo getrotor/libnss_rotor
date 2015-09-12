@@ -40,7 +40,7 @@ _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
   size_t l, idx, alen;
   char *r_addr, *r_name, *r_aliases, *r_addr_list;
 
-  if (strcmp(name, "nsstest.varoun.com") == 0)
+  if (strcmp(name, "www.bsd.org") == 0)
   {
     if (af = AF_INET) {
       printf("Custom lookup\n");
@@ -59,7 +59,9 @@ _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
       /* Third, add the address */
       r_addr = buffer + idx;
       alen = 4; /* 4 for AF_INET */
-      in_addr_t addr = inet_addr("1.2.3.4");
+      char result[16];
+      get_real(name, result);
+      in_addr_t addr = inet_addr(result);
       memcpy(r_addr, &addr, alen);
       idx += ALIGN(alen);
 

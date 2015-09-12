@@ -11,8 +11,8 @@
 #include <err.h>
 #include <sys/socket.h>
 
-#define BUFLEN 128
-#define TIMEOUT 20
+#define BUFLEN 16
+#define TIMEOUT 5
 
 void
 sigalrm(int signo)
@@ -20,7 +20,7 @@ sigalrm(int signo)
 }
 
 void
-print_echo(const char *str, int sockfd)
+make_request(int sockfd, const char *name, char *result)
 {
   char buf[BUFLEN];
   int n;
@@ -31,7 +31,7 @@ print_echo(const char *str, int sockfd)
   addr.sin_port = htons(6789);
   addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-  if (sendto(sockfd, str, strlen(str), 0,
+  if (sendto(sockfd, name, strlen(name), 0,
              (struct sockaddr *)&addr, sizeof(addr)) < 0)
     errx(EX_IOERR, "sendto error");
 
@@ -43,14 +43,12 @@ if ((n = recvfrom(sockfd, buf, BUFLEN, 0, NULL, NULL)) < 0) {
   }
 
   alarm(0);
-  write(STDOUT_FILENO, buf, n);
+  memcpy(result, buf, n);
 }
 
 int
-main(int argc, char *argv[])
+get_real(char *name, char *result)
 {
-  if (argc != 2)
-    errx(EX_USAGE, "Usage: ./a.out <string>");
 
     int sockfd, err;
     struct sigaction sa;
@@ -65,12 +63,11 @@ main(int argc, char *argv[])
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
       err = errno;
     } else {
-      print_echo(argv[1], sockfd);
-      exit(0);
+      make_request(sockfd, name, result);
+      return(0);
     }
 
-    fprintf(stderr, "cant contact localhost echo server: %s",
+    fprintf(stderr, "cant contact localhost rotdserver: %s",
             strerror(err));
-    exit(1);
+    return(1);
 }
-
