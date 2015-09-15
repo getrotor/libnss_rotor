@@ -43,9 +43,9 @@ _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
     get_real(name, result);
 
     if (strcmp(result, "ns_unavail") == 0) {
-      return NSS_STATUS_UNAVAIL;
+      return NSS_STATUS_NOTFOUND;
     } else if (strcmp(result, "ns_tryagain") == 0) {
-      return NSS_STATUS_TRYAGAIN;
+      return NSS_STATUS_NOTFOUND;
     } else {
 
       /* First fill in the hostname */
