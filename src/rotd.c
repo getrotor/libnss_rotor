@@ -83,9 +83,6 @@ fill_in_hostent(const char *name, int af,
 
   size_t alen = PROTO_ADDRESS_SIZE(af);
 
-  /* Make the query to rotor and get the result */
-  char real[16];
-  get_real(name, real);
 
   l = strlen(name);
   ms = ALIGN(l+1) +
@@ -111,6 +108,15 @@ fill_in_hostent(const char *name, int af,
 
   /* Third - add the addresses */
   r_addr = buffer + idx;
+  /* Make the query to rotor and get the result */
+  char real[16];
+
+  /* TODO(varoun): Why is this memset needed? Without it we seem to get
+  ** incorrect results. Ex. 255.255.255.255 as the response!
+  */
+
+  memset(real, 0, sizeof(real));
+  get_real(name, real);
   in_addr_t addr = inet_addr(real);
   memcpy(r_addr, &addr, alen);
   idx += ALIGN(alen);
