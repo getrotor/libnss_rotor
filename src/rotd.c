@@ -68,22 +68,6 @@ _nss_rotd_gethostbyaddr_r(const void* addr, socklen_t len,
                                 int *errnop, int *h_errnop) _public_;
 
 
-enum nss_status
-_nss_rotd_sethostent (int flag) {
-  return NSS_STATUS_SUCCESS;
-};
-
-enum nss_status
-_nss_rotd_endhostent (void) {
-  return NSS_STATUS_SUCCESS;
-};
-
-enum nss_status
-_nss_rotd_gethostent_r (struct hostent *host,
-                        char *buffer, size_t buflen,
-                        int *errnop, int *h_errnop) {
-  return NSS_STATUS_NOTFOUND;
-};
 
 enum nss_status
 _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
