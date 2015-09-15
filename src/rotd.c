@@ -13,13 +13,11 @@ NSS Prototypes.
 
 enum nss_status
 _nss_rotd_sethostent (int flag) {
-  printf("@ %s\n", __FUNCTION__);
   return NSS_STATUS_SUCCESS;
 };
 
 enum nss_status
 _nss_rotd_endhostent (void) {
-  printf("@ %s\n", __FUNCTION__);
   return NSS_STATUS_SUCCESS;
 };
 
@@ -27,7 +25,6 @@ enum nss_status
 _nss_rotd_gethostent_r (struct hostent *host,
                         char *buffer, size_t buflen,
                         int *errnop, int *h_errnop) {
-  printf("@ %s\n", __FUNCTION__);
   return NSS_STATUS_NOTFOUND;
 };
 
@@ -35,15 +32,21 @@ enum nss_status
 _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
                             char *buffer, size_t buflen,
                             int *errnop, int *h_errnop) {
-  printf("@ %s\n", __FUNCTION__);
 
   size_t l, idx, alen;
   char *r_addr, *r_name, *r_aliases, *r_addr_list;
 
-  if (strcmp(name, "www.bsd.org") == 0)
-  {
-    if (af = AF_INET) {
-      printf("Custom lookup\n");
+  if (af = AF_INET) {
+
+    /* Step Zero - Make a query to rotor */
+    char result[16];
+    get_real(name, result);
+
+    if (strcmp(result, "ns_unavail") == 0) {
+      return NSS_STATUS_UNAVAIL;
+    } else if (strcmp(result, "ns_tryagain") == 0) {
+      return NSS_STATUS_TRYAGAIN;
+    } else {
 
       /* First fill in the hostname */
       l = strlen(name);
@@ -59,8 +62,6 @@ _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
       /* Third, add the address */
       r_addr = buffer + idx;
       alen = 4; /* 4 for AF_INET */
-      char result[16];
-      get_real(name, result);
       in_addr_t addr = inet_addr(result);
       memcpy(r_addr, &addr, alen);
       idx += ALIGN(alen);
@@ -81,7 +82,6 @@ _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
     }
   }
 
-
   return NSS_STATUS_NOTFOUND;
 };
 
@@ -90,7 +90,6 @@ enum nss_status
 _nss_rotd_gethostbyname_r (const char *name, struct hostent *host,
                            char *buffer, size_t buflen,
                            int *errnop, int *h_errnop) {
-  printf("@ %s\n", __FUNCTION__);
   return NSS_STATUS_NOTFOUND;
 };
 
@@ -98,6 +97,5 @@ enum nss_status
 _nss_rotd_gethostbyaddr_r (const void *addr, socklen_t addrlen, int af,	struct hostent *host,
                            char *buffer, size_t buflen,
                            int *errnop, int *h_errnop) {
-  printf("@ %s\n", __FUNCTION__);
   return NSS_STATUS_NOTFOUND;
 };
