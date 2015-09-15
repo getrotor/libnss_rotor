@@ -4,12 +4,69 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <assert.h>
+
+#define _public_ __attribute__ ((visibility("default")))
+#define _hidden_ __attribute__ ((visibility("hidden")))
+
+static inline size_t PROTO_ADDRESS_SIZE(int proto) {
+  assert(proto == AF_INET || proto == AF_INET6);
+  return proto == AF_INET6 ? 16 : 4;
+}
+
 
 #define ALIGN(a) (((a+sizeof(void*)-1)/sizeof(void*))*sizeof(void*))
+
+
 /*
 NOTE(varoun): Look at include/netdb.h in the glibc source for the
 NSS Prototypes.
 */
+
+enum nss_status
+_nss_rotd_gethostbyname4_r(const char *name,
+                                 struct gaih_addrtuple **pat,
+                                 char *buffer, size_t buflen,
+                                 int *errnop, int *h_errnop,
+                                 int32_t *ttlp) _public_;
+
+enum nss_status
+_nss_rotd_gethostbyname3_r(const char *name,
+                                 int af,
+                                 struct hostent *host,
+                                 char *buffer, size_t buflen,
+                                 int *errnop, int *h_errnop,
+                                 int32_t *ttlp,
+                                 char **canonp) _public_;
+
+enum nss_status
+_nss_rotd_gethostbyname2_r(const char *name,
+                                 int af,
+                                 struct hostent *host,
+                                 char *buffer, size_t buflen,
+                                 int *errnop, int *h_errnop) _public_;
+
+enum nss_status
+_nss_rotd_gethostbyname_r(const char *name,
+                                struct hostent *host,
+                                char *buffer, size_t buflen,
+                                int *errnop, int *h_errnop) _public_;
+
+enum nss_status
+_nss_rotd_gethostbyaddr2_r(const void* addr, socklen_t len,
+                                 int af,
+                                 struct hostent *host,
+                                 char *buffer, size_t buflen,
+                                 int *errnop, int *h_errnop,
+                                 int32_t *ttlp) _public_;
+
+enum nss_status
+_nss_rotd_gethostbyaddr_r(const void* addr, socklen_t len,
+                                int af,
+                                struct hostent *host,
+                                char *buffer, size_t buflen,
+                                int *errnop, int *h_errnop) _public_;
+
 
 enum nss_status
 _nss_rotd_sethostent (int flag) {
