@@ -140,6 +140,36 @@ fill_in_hostent(const char *name, int af,
   return NSS_STATUS_SUCCESS;
 }
 
+enum nss_status
+_nss_rotd_gethostbyname3_r(const char *name,
+                           int af,
+                           struct hostent *host,
+                           char *buffer, size_t buflen,
+                           int *errnop, int *h_errnop,
+                           int32_t *ttlp,
+                           char **canonp) {
+  if (af == AF_UNSPEC)
+    af = AF_INET;
+
+  if (af != AF_INET) {
+    *errnop = EAFNOSUPPORT;
+    *h_errnop = NO_DATA;
+    return NSS_STATUS_UNAVAIL;
+  }
+
+  if (strcasecmp(name, "www.bsd.org") != 0) {
+    *errnop = ENOENT;
+    *h_errnop = HOST_NOT_FOUND;
+    return NSS_STATUS_NOTFOUND;
+  }
+
+  return fill_in_hostent(name, af, host, buffer, buflen, errnop, h_errnop,
+                         ttlp, canonp);
+}
+
+
+
+
 
 enum nss_status
 _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
