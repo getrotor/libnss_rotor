@@ -68,6 +68,61 @@ _nss_rotd_gethostbyaddr_r(const void* addr, socklen_t len,
                                 char *buffer, size_t buflen,
                                 int *errnop, int *h_errnop) _public_;
 
+enum nss_status
+_nss_rotd_gethostbyname4_r(const char *name,
+                           struct gaih_addrtuple **pat,
+                           char *buffer, size_t buflen,
+                           int *errnop, int *h_errnop,
+                           int32_t *ttlp)
+{
+
+  size_t l, idx, ms;
+  char *r_name;
+  struct gaih_addrtuple *r_tuple, *r_tuple_prev = NULL;
+
+  /* Check to make sure the name is in our rotation. */
+  if (strcasecmp(name, "www.bsd.org") != 0) {
+    *errnop = ENOENT;
+    *h_errnop = HOST_NOT_FOUND;
+    return NSS_STATUS_NOTFOUND;
+  }
+
+  l = strlen(name);
+  ms = ALIGN(l+1)+ALIGN(sizeof(struct gaih_addrtuple));
+  if (buflen < ms) {
+    *errnop = ENOMEM;
+    *h_errnop = NO_RECOVERY;
+    return NSS_STATUS_TRYAGAIN;
+  }
+
+  /* First, Fill in the hostname */
+  r_name = buffer;
+  memcpy(r_name, name, l+1);
+  idx = ALIGN(l+1);
+
+  /* Fill in the address */
+  in_addr_t ipv4 = inet_addr("1.2.3.4");
+  r_tuple = (struct gaih_addrtuple*) (buffer + idx);
+  r_tuple->next = r_tuple_prev;
+  r_tuple->name = r_name;
+  r_tuple->family = AF_INET;
+  r_tuple->scopeid = 0;
+  memcpy(r_tuple->addr, &ipv4, 4);
+  r_tuple_prev = r_tuple;
+
+  idx += ALIGN(sizeof(struct  gaih_addrtuple));
+
+  /* Verify that size matches */
+  assert(idx == ms);
+
+  *pat = r_tuple_prev;
+
+  if (ttlp)
+    *ttlp = 0;
+
+  return NSS_STATUS_SUCCESS;
+
+  };
 
 
 static enum nss_status
