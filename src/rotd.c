@@ -81,11 +81,12 @@ _nss_rotd_gethostbyname4_r(const char *name,
   struct gaih_addrtuple *r_tuple, *r_tuple_prev = NULL;
 
   /* Check to make sure the name is in our rotation. */
-  if (strcasecmp(name, "www.bsd.org") != 0) {
-    *errnop = ENOENT;
-    *h_errnop = HOST_NOT_FOUND;
-    return NSS_STATUS_NOTFOUND;
-  }
+  /* TODO(varoun): Do a proper rotation check here */
+  /* if (strcasecmp(name, "www.bsd.org") != 0) { */
+  /*   *errnop = ENOENT; */
+  /*   *h_errnop = HOST_NOT_FOUND; */
+  /*   return NSS_STATUS_NOTFOUND; */
+  /* } */
 
   l = strlen(name);
   ms = ALIGN(l+1)+ALIGN(sizeof(struct gaih_addrtuple));
@@ -100,9 +101,25 @@ _nss_rotd_gethostbyname4_r(const char *name,
   memcpy(r_name, name, l+1);
   idx = ALIGN(l+1);
 
- /* TODO(varoun): CAll rotor here! */
+  /* Make the query to rotor and get the result */
+  char real[16];
+
+  /* TODO(varoun): Why is this memset needed? Without it we seem to get
+  ** incorrect results. Ex. 255.255.255.255 as the response!
+  */
+
+  memset(real, 0, sizeof(real));
+  get_real(name, real);
+
+  if((strcasecmp(real, "ns_unavail") == 0) ||
+     (strcasecmp(real, "ns_tryagain") == 0)) {
+    *errnop = ENOENT;
+    *h_errnop = HOST_NOT_FOUND;
+    return NSS_STATUS_NOTFOUND;
+  }
+
   /* Fill in the address */
-  in_addr_t ipv4 = inet_addr("1.2.3.4");
+  in_addr_t ipv4 = inet_addr(real);
   r_tuple = (struct gaih_addrtuple*) (buffer + idx);
   r_tuple->next = r_tuple_prev;
   r_tuple->name = r_name;
