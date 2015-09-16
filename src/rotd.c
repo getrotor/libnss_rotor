@@ -100,6 +100,7 @@ _nss_rotd_gethostbyname4_r(const char *name,
   memcpy(r_name, name, l+1);
   idx = ALIGN(l+1);
 
+ /* TODO(varoun): CAll rotor here! */
   /* Fill in the address */
   in_addr_t ipv4 = inet_addr("1.2.3.4");
   r_tuple = (struct gaih_addrtuple*) (buffer + idx);
@@ -226,11 +227,12 @@ _nss_rotd_gethostbyname3_r(const char *name,
     return NSS_STATUS_UNAVAIL;
   }
 
-  if (strcasecmp(name, "www.bsd.org") != 0) {
-    *errnop = ENOENT;
-    *h_errnop = HOST_NOT_FOUND;
-    return NSS_STATUS_NOTFOUND;
-  }
+ /* TODO(varoun): Check for valid rotations here ? */
+  /* if (strcasecmp(name, "www.bsd.org") != 0) { */
+  /*   *errnop = ENOENT; */
+  /*   *h_errnop = HOST_NOT_FOUND; */
+  /*   return NSS_STATUS_NOTFOUND; */
+  /* } */
 
   return fill_in_hostent(name, af, host, buffer, buflen, errnop, h_errnop,
                          ttlp, canonp);
