@@ -172,6 +172,14 @@ fill_in_hostent(const char *name, int af,
 
   memset(real, 0, sizeof(real));
   get_real(name, real);
+
+  if((strcasecmp(real, "ns_unavail") == 0) ||
+     (strcasecmp(real, "ns_tryagain") == 0)) {
+    *errnop = ENOENT;
+    *h_errnop = HOST_NOT_FOUND;
+    return NSS_STATUS_NOTFOUND;
+  }
+
   in_addr_t addr = inet_addr(real);
   memcpy(r_addr, &addr, alen);
   idx += ALIGN(alen);
