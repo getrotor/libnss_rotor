@@ -12,7 +12,7 @@
 #include <sys/socket.h>
 
 #define BUFLEN 16
-#define TIMEOUT 5
+#define TIMEOUT 1
 
 void
 sigalrm(int signo)
