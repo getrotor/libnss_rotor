@@ -109,7 +109,11 @@ _nss_rotd_gethostbyname4_r(const char *name,
   */
 
   memset(real, 0, sizeof(real));
-  get_real(name, real);
+  if (get_real(name, real)!= 0) {
+   *errnop = ENOENT;
+   *h_errnop = HOST_NOT_FOUND;
+   return NSS_STATUS_NOTFOUND;
+  }
 
   if((strcasecmp(real, "ns_unavail") == 0) ||
      (strcasecmp(real, "ns_tryagain") == 0)) {
@@ -189,7 +193,11 @@ fill_in_hostent(const char *name, int af,
   */
 
   memset(real, 0, sizeof(real));
-  get_real(name, real);
+  if (get_real(name, real) != 0) {
+    *errnop = ENOENT;
+    *h_errnop = HOST_NOT_FOUND;
+    return NSS_STATUS_NOTFOUND;
+  }
 
   if((strcasecmp(real, "ns_unavail") == 0) ||
      (strcasecmp(real, "ns_tryagain") == 0)) {

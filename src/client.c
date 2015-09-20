@@ -19,7 +19,7 @@ sigalrm(int signo)
 {
 }
 
-void
+int
 make_request(int sockfd, const char *name, char *result)
 {
   char buf[BUFLEN];
@@ -39,11 +39,12 @@ make_request(int sockfd, const char *name, char *result)
 if ((n = recvfrom(sockfd, buf, BUFLEN, 0, NULL, NULL)) < 0) {
     if (errno != EINTR)
       alarm(0);
-    errx(EX_IOERR, "recv error");
+    return(1);
   }
 
   alarm(0);
   memcpy(result, buf, n);
+  return(0);
 }
 
 int
@@ -63,7 +64,8 @@ get_real(char *name, char *result)
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
       err = errno;
     } else {
-      make_request(sockfd, name, result);
+      if (make_request(sockfd, name, result) != 0)
+        return(1);
       return(0);
     }
 
