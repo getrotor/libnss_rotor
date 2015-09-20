@@ -39,7 +39,7 @@ make_request(int sockfd, const char *name, char *result)
 if ((n = recvfrom(sockfd, buf, BUFLEN, 0, NULL, NULL)) < 0) {
     if (errno != EINTR)
       alarm(0);
-    return(1);
+    return(-1);
   }
 
   alarm(0);
@@ -65,11 +65,11 @@ get_real(char *name, char *result)
       err = errno;
     } else {
       if (make_request(sockfd, name, result) != 0)
-        return(1);
+        return(-1);
       return(0);
     }
 
     fprintf(stderr, "cant contact localhost rotdserver: %s",
             strerror(err));
-    return(1);
+    return(-1);
 }
