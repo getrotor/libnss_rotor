@@ -1,4 +1,4 @@
-/* NSS Module for rotd */
+/* NSS Module for rotor */
 #include <stdio.h>
 #include <nss.h>
 #include <netdb.h>
@@ -25,14 +25,14 @@ NSS Prototypes.
 */
 
 enum nss_status
-_nss_rotd_gethostbyname4_r(const char *name,
+_nss_rotor_gethostbyname4_r(const char *name,
                                  struct gaih_addrtuple **pat,
                                  char *buffer, size_t buflen,
                                  int *errnop, int *h_errnop,
                                  int32_t *ttlp) _public_;
 
 enum nss_status
-_nss_rotd_gethostbyname3_r(const char *name,
+_nss_rotor_gethostbyname3_r(const char *name,
                                  int af,
                                  struct hostent *host,
                                  char *buffer, size_t buflen,
@@ -41,20 +41,20 @@ _nss_rotd_gethostbyname3_r(const char *name,
                                  char **canonp) _public_;
 
 enum nss_status
-_nss_rotd_gethostbyname2_r(const char *name,
+_nss_rotor_gethostbyname2_r(const char *name,
                                  int af,
                                  struct hostent *host,
                                  char *buffer, size_t buflen,
                                  int *errnop, int *h_errnop) _public_;
 
 enum nss_status
-_nss_rotd_gethostbyname_r(const char *name,
+_nss_rotor_gethostbyname_r(const char *name,
                                 struct hostent *host,
                                 char *buffer, size_t buflen,
                                 int *errnop, int *h_errnop) _public_;
 
 enum nss_status
-_nss_rotd_gethostbyaddr2_r(const void* addr, socklen_t len,
+_nss_rotor_gethostbyaddr2_r(const void* addr, socklen_t len,
                                  int af,
                                  struct hostent *host,
                                  char *buffer, size_t buflen,
@@ -62,14 +62,14 @@ _nss_rotd_gethostbyaddr2_r(const void* addr, socklen_t len,
                                  int32_t *ttlp) _public_;
 
 enum nss_status
-_nss_rotd_gethostbyaddr_r(const void* addr, socklen_t len,
+_nss_rotor_gethostbyaddr_r(const void* addr, socklen_t len,
                                 int af,
                                 struct hostent *host,
                                 char *buffer, size_t buflen,
                                 int *errnop, int *h_errnop) _public_;
 
 enum nss_status
-_nss_rotd_gethostbyname4_r(const char *name,
+_nss_rotor_gethostbyname4_r(const char *name,
                            struct gaih_addrtuple **pat,
                            char *buffer, size_t buflen,
                            int *errnop, int *h_errnop,
@@ -236,7 +236,7 @@ fill_in_hostent(const char *name, int af,
 }
 
 enum nss_status
-_nss_rotd_gethostbyname3_r(const char *name,
+_nss_rotor_gethostbyname3_r(const char *name,
                            int af,
                            struct hostent *host,
                            char *buffer, size_t buflen,
@@ -264,11 +264,11 @@ _nss_rotd_gethostbyname3_r(const char *name,
 }
 
 enum nss_status
-_nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
+_nss_rotor_gethostbyname2_r (const char *name, int af, struct hostent *host,
                             char *buffer, size_t buflen,
                             int *errnop, int *h_errnop) {
 
-  return _nss_rotd_gethostbyname3_r(name, af, host,
+  return _nss_rotor_gethostbyname3_r(name, af, host,
                                     buffer, buflen,
                                     errnop, h_errnop,
                                     NULL, NULL);
@@ -276,10 +276,10 @@ _nss_rotd_gethostbyname2_r (const char *name, int af, struct hostent *host,
 
 
 enum nss_status
-_nss_rotd_gethostbyname_r (const char *name, struct hostent *host,
+_nss_rotor_gethostbyname_r (const char *name, struct hostent *host,
                            char *buffer, size_t buflen,
                            int *errnop, int *h_errnop) {
-  return _nss_rotd_gethostbyname3_r(name, AF_UNSPEC, host,
+  return _nss_rotor_gethostbyname3_r(name, AF_UNSPEC, host,
                                     buffer, buflen,
                                     errnop, h_errnop,
                                     NULL, NULL);
